@@ -15,7 +15,7 @@
 
 📫 How to reach me
 ---
-<a href="mailto:altsmpegado@gmail.com"><img src="assets/email.svg" title="Email" alt="Email" width="40" height="40"/></a>&nbsp;
+<a href="mailto:altsmpegado@gmail.com"><img src="assets/email.png" title="Email" alt="Email" width="40" height="40"/></a>&nbsp;
 <a href="https://www.linkedin.com/in/altsmpegado/"><img src="assets/linkedin.png" title="Linkedin" alt="Linkedin" width="40" height="40"/></a>&nbsp;
 
 🖊️ My latest Medium stories
