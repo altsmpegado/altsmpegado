@@ -11,5 +11,5 @@
 - ⚡ Fun fact: ...
 -->
 
-<a target="_blank" href="https://medium.com/@altsmpegado/innovating-complex-systems-the-power-of-microcontrollers-50c8fad33a45"><img src="https://medium.com/@altsmpegado/innovating-complex-systems-the-power-of-microcontrollers-50c8fad33a45" alt="Recent Article 0"> 
+<a target="_blank" href="https://github-readme-medium-recent-article.vercel.app/medium/altsmpegado/innovating-complex-systems-the-power-of-microcontrollers-50c8fad33a45"><img src="https://github-readme-medium-recent-article.vercel.app/medium/altsmpegado/innovating-complex-systems-the-power-of-microcontrollers-50c8fad33a45" alt="Recent Article 0"> 
 
