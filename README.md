@@ -35,9 +35,9 @@ Hard-working engineering student, who always thinks outside the box, looking for
 ---
 <a target="_blank" href="https://github-readme-medium-recent-article.vercel.app/medium/@altsmpegado/0" style="display: block; width: 100%;"><img src="https://github-readme-medium-recent-article.vercel.app/medium/@altsmpegado/0" alt="Recent Article 0"></a>
 
-⚡ Fun fact
+<!--⚡ Fun fact
 ---
-
+-->
 🔥 Stats
 ---
 <a href="https://git.io/streak-stats">
