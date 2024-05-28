@@ -2,12 +2,7 @@
 
 5th year student @ **NOVA School of Science & Technology** (FCT-NOVA), enrolled in the Integrated Master’s in Electrical and Computer Engineering, collaborative researcher @ **RICS-UNINIVA** group, and Co-Founder and CTO @ **Trash4Goods**, with particular interest and aptitude in the areas of Robotics, Software Systems and AI. Hard-working engineering student, who always thinks outside the box, looking for an opportunity to add real value and to be challenged to achieve something meaningful and innovative.
 
-
-🌱 I’m currently learning and working with
----
-NodeJS, Electron, PostgreSQL, Docker and Pytorch YOLO
-
-📚 My stack
+🌱 My stack
 ---
 <a><img src="assets/c.png" title="C" alt="C" width="38" height="40"/></a>&nbsp;
 <a><img src="assets/docker.png" title="Docker" alt="Docker" width="54" height="40"/></a>&nbsp;
