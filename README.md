@@ -20,6 +20,6 @@
 
 Stats
 ---
-<a href="https://git.io/streak-stats" style="display: block; width: 100%;">
-  <img src="https://streak-stats.demolab.com?user=altsmpegado&theme=whatsapp-dark2" alt="GitHub Streak" style="width: 100%;" />
+<a href="https://git.io/streak-stats">
+  <img src="https://streak-stats.demolab.com?user=altsmpegado&theme=whatsapp-dark2" alt="GitHub Streak"/>
 </a>
