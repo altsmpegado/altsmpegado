@@ -14,12 +14,16 @@ Hard-working engineering student, who always thinks outside the box, looking for
   <img alt="Java" src="https://img.shields.io/badge/Java-ED8B00?style=flat-square&logo=openjdk&logoColor=white" />
   <img alt="JavaScript" src="https://img.shields.io/badge/JavaScript-F7DF1E?style=flat-square&logo=javascript&logoColor=black" />
   <img alt="git" src="https://img.shields.io/badge/-Git-F05032?style=flat-square&logo=git&logoColor=white" />
+  <img alt="powershell" src="https://img.shields.io/badge/powershell-5391FE?style=flat-square&logo=powershell&logoColor=white" />
+  <img alt="arduino" src="https://img.shields.io/badge/Arduino-00979D?style=flat-square&logo=Arduino&logoColor=white" />
+  <img alt="rpi" src="https://img.shields.io/badge/Raspberry%20Pi-A22846?style=flat-square&logo=Raspberry%20Pi&logoColor=white" />
   <img alt="PostgreSQL" src="https://img.shields.io/badge/PostgreSQL-316192?style=flat-square&logo=postgresql&logoColor=white" />
   <img alt="MongoDB" src="https://img.shields.io/badge/-MongoDB-13aa52?style=flat-square&logo=mongodb&logoColor=white" />
   <img alt="Nodejs" src="https://img.shields.io/badge/-Nodejs-43853d?style=flat-square&logo=Node.js&logoColor=white" />
   <img alt="TensorFlow" src="https://img.shields.io/badge/TensorFlow-FF6F00?style=flat-square&logo=tensorflow&logoColor=white" />
   <img alt="html" src="https://img.shields.io/badge/HTML-239120?style=flat-square&logo=html5&logoColor=white" />
   <img alt="css" src="https://img.shields.io/badge/CSS-239120?style=flat-square&logo=css3&logoColor=white" />
+  <img alt="notion" src="https://img.shields.io/badge/Notion-000000?style=flat-square&logo=notion&logoColor=white" />
 </p>
 
 📫 How to reach me
@@ -37,5 +41,5 @@ Hard-working engineering student, who always thinks outside the box, looking for
 🔥 Stats
 ---
 <a href="https://git.io/streak-stats">
-  <img src="https://streak-stats.demolab.com?user=altsmpegado&theme=whatsapp-dark2" alt="GitHub Streak"/>
+  <img src="https://streak-stats.demolab.com?user=altsmpegado&theme=dark" alt="GitHub Streak"/>
 </a>
