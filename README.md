@@ -1,4 +1,4 @@
-<a><img src="assets/cover.jpg" alt="Cover Image"></a>
+<a style="display: block; width: 100%;"><img src="assets/cover.jpg" alt="Cover Image"></a>
 
 # Hi there, I'm António (alts)
 
