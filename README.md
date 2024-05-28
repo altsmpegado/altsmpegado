@@ -7,7 +7,7 @@
 ---
 NodeJS, Electron, PostgreSQL, Docker and Pytorch YOLO
 
-🌱 My stack
+📚 My stack
 ---
 <a><img src="assets/c.png" title="C" alt="C" width="38" height="40"/></a>&nbsp;
 <a><img src="assets/docker.png" title="Docker" alt="Docker" width="54" height="40"/></a>&nbsp;
