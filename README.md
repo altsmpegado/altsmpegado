@@ -1,3 +1,5 @@
+<a><img src="assets/cover.jpg" alt="Cover Image"></a>
+
 # Hi there, I'm António (alts)
 
 5th year student @ **NOVA School of Science & Technology** (FCT-NOVA), enrolled in the Integrated Master’s in Electrical and Computer Engineering, collaborative researcher @ **RICS-UNINIVA** group, and Co-Founder and CTO @ **Trash4Goods**, with particular interest and aptitude in the areas of Robotics, Software Systems and AI. Hard-working engineering student, who always thinks outside the box, looking for an opportunity to add real value and to be challenged to achieve something meaningful and innovative.
