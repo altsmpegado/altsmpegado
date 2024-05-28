@@ -2,16 +2,12 @@
 
 # Hi there, I'm António (alts)
 
-5th year student @ **NOVA School of Science & Technology** (FCT-NOVA), enrolled in the Integrated Master’s in Electrical and Computer Engineering, collaborative researcher @ **RICS-UNINIVA** group, and Co-Founder and CTO @ **Trash4Goods**, with particular interest and aptitude in the areas of Robotics, Software Systems and AI. Hard-working engineering student, who always thinks outside the box, looking for an opportunity to add real value and to be challenged to achieve something meaningful and innovative.
+Hard-working engineering student, who always thinks outside the box, looking for an opportunity to add real value and to be challenged to achieve something meaningful and innovative.
 
 🌱 My stack
 ---
-<a><img src="assets/c.png" title="C" alt="C" width="38" height="40"/></a>&nbsp;
-<a><img src="assets/docker.png" title="Docker" alt="Docker" width="54" height="40"/></a>&nbsp;
-<a><img src="assets/python.png" title="Python" alt="Python" width="40" height="40"/></a>&nbsp;
-<a><img src="assets/java.svg" title="Java" alt="Java" width="40" height="40"/></a>&nbsp;
-<a><img src="assets/nodejs.png" title="nodejs" alt="nodejs" width="70" height="40"/></a>&nbsp;
-<a><img src="assets/js.png" title="JavaScript" alt="JavaScript" width="40" height="40"/></a>&nbsp;
+<img alt="MongoDB" src="https://img.shields.io/badge/-MongoDB-13aa52?style=flat-square&logo=mongodb&logoColor=white" />
+<img alt="Nodejs" src="https://img.shields.io/badge/-Nodejs-43853d?style=flat-square&logo=Node.js&logoColor=white" />
 
 📫 How to reach me
 ---
