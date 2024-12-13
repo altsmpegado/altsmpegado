@@ -2,7 +2,7 @@
 
 # Hi there, I'm António (alts)
 
-Hard-working engineering student, who always thinks outside the box, looking for an opportunity to add real value and to be challenged to achieve something meaningful and innovative.
+Hard-working PhD student, who always thinks outside the box, looking for an opportunity to add real value and to be challenged to achieve something meaningful and innovative.
 
 🌱 My stack
 ---
