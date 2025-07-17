@@ -20,7 +20,7 @@ async function createOrUpdateIssueInNotion() {
         url: process.env.ISSUE_URL,
       },
       Status: {
-        select: {
+        status: {
           name: process.env.ISSUE_STATE === "open" ? "Open" : "Closed",
         },
       },
