@@ -101,7 +101,7 @@ async function createOrUpdateIssueInNotion() {
                     object: "block",
                     type: "paragraph",
                     paragraph: {
-                        text: [
+                        rich_text: [
                             {
                                 type: "text",
                                 text: { content: issueBodyCleaned || "No description" },
@@ -121,7 +121,7 @@ async function createOrUpdateIssueInNotion() {
                     object: "block",
                     type: "paragraph",
                     paragraph: {
-                        text: [
+                        rich_text: [
                             {
                                 type: "text",
                                 text: { content: issueBodyCleaned || "No description" },
