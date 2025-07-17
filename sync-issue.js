@@ -2,18 +2,21 @@ const { Client } = require("@notionhq/client");
 
 const notion = new Client({ auth: process.env.NOTION_TOKEN });
 
-async function listUsers() {
-  const res = await notion.users.list();
-  res.results.forEach(user => {
-    console.log(`${user.name} — ${user.id}`);
-  });
-}
-
-listUsers();
-
 const userMap = {
   "altsmpegado": "d8974b57-089f-498d-8be6-f83c3506b091"
 };
+
+async function findPageByIssueUrl(issueUrl) {
+  const response = await notion.databases.query({
+    database_id: process.env.NOTION_DATABASE_ID,
+    filter: {
+      property: "Issue URL",
+      url: { equals: issueUrl },
+    },
+  });
+
+  return response.results[0]; // returns undefined if not found
+}
 
 async function createOrUpdateIssueInNotion() {
   const labelsJson = process.env.ISSUE_LABELS || "[]";
@@ -63,10 +66,19 @@ async function createOrUpdateIssueInNotion() {
     };
   }
 
-  await notion.pages.create({
-    parent: { database_id: process.env.NOTION_DATABASE_ID },
-    properties,
-  });
+  const existingPage = await findPageByIssueUrl(process.env.ISSUE_URL);
+
+  if (existingPage) {
+    await notion.pages.update({
+      page_id: existingPage.id,
+      properties,
+    });
+  } else {
+    await notion.pages.create({
+      parent: { database_id: process.env.NOTION_DATABASE_ID },
+      properties,
+    });
+  }
 }
 
 createOrUpdateIssueInNotion().catch(console.error);
