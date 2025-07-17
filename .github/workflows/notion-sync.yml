@@ -1,26 +1,30 @@
 name: Sync GitHub Issues to Notion
 
 on:
-  issues:
-    types: [opened, edited, reopened, closed]
+    issues:
+        types: [opened, edited, reopened, closed]
+    issue_comment:
+        types: [created]
 
 jobs:
-  sync:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v3
-      - uses: actions/setup-node@v3
-        with:
-          node-version: 18
-      - run: npm install @notionhq/client
-      - run: node sync-issue.js
-        env:
-          NOTION_TOKEN: ${{ secrets.NOTION_API_KEY }}
-          NOTION_DATABASE_ID: ${{ secrets.NOTION_DATABASE }}
-          ISSUE_TITLE: "${{ github.event.issue.title }}"
-          ISSUE_ASSIGNEE: "${{ github.event.issue.assignee.login }}"
-          ISSUE_URL: "${{ github.event.issue.html_url }}"
-          ISSUE_STATE: "${{ github.event.issue.state }}"
-          ISSUE_LABELS: "${{ toJson(github.event.issue.labels) }}"
-          ISSUE_BODY: "${{ github.event.issue.body }}"
-          REPO_NAME: "${{ github.repository }}"
+    sync:
+        runs-on: ubuntu-latest
+        steps:
+            - uses: actions/checkout@v3
+            - uses: actions/setup-node@v3
+              with:
+                node-version: 18
+            - run: npm install @notionhq/client
+            - run: node sync-issue.js
+              env:
+                NOTION_TOKEN: ${{ secrets.NOTION_API_KEY }}
+                NOTION_DATABASE_ID: ${{ secrets.NOTION_DATABASE }}
+                ISSUE_TITLE: "${{ github.event.issue.title }}"
+                ISSUE_ASSIGNEE: "${{ github.event.issue.assignee.login }}"
+                ISSUE_URL: "${{ github.event.issue.html_url }}"
+                ISSUE_STATE: "${{ github.event.issue.state }}"
+                ISSUE_LABELS: "${{ toJson(github.event.issue.labels) }}"
+                ISSUE_BODY: "${{ github.event.issue.body }}"
+                REPO_NAME: "${{ github.repository }}"
+                COMMENT_BODY: ${{ github.event.comment.body || '' }}
+                COMMENT_AUTHOR: ${{ github.event.comment.user.login || '' }}

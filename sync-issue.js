@@ -40,6 +40,29 @@ async function deleteAllBlocks(pageId) {
     }
 }
 
+async function appendCommentToPage(pageId, commentBody, author) {
+    if (!commentBody) return;
+
+    const formattedText = `💬 ${author}: ${commentBody}`;
+
+    await notion.blocks.children.append({
+        block_id: pageId,
+        children: [
+            {
+                object: "block",
+                paragraph: {
+                    rich_text: [
+                        {
+                            type: "text",
+                            text: { content: formattedText },
+                        },
+                    ],
+                },
+            },
+        ],
+    });
+}
+
 async function createOrUpdateIssueInNotion() {
     const labelsJson = process.env.ISSUE_LABELS || "[]";
     const labels = JSON.parse(labelsJson).map(label => label.name);
@@ -131,6 +154,13 @@ async function createOrUpdateIssueInNotion() {
                 },
             ],
         });
+    }
+
+    const commentBody = process.env.COMMENT_BODY;
+    const commentAuthor = process.env.COMMENT_AUTHOR;
+
+    if (commentBody && commentAuthor && existingPage) {
+        await appendCommentToPage(existingPage.id, commentBody, commentAuthor);
     }
 }
 
