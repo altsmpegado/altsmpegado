@@ -12,7 +12,7 @@ async function listUsers() {
 listUsers();
 
 const userMap = {
-  "altsmpegado": "notion-user-id-abc123"
+  "altsmpegado": "d8974b57-089f-498d-8be6-f83c3506b091"
 };
 
 async function createOrUpdateIssueInNotion() {
