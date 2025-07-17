@@ -15,8 +15,8 @@ jobs:
       - run: npm install @notionhq/client
       - run: node sync-issue.js
         env:
-          NOTION_TOKEN: ${{ secrets.NOTION_TOKEN }}
-          NOTION_DATABASE_ID: ${{ secrets.NOTION_DATABASE_ID }}
+          NOTION_TOKEN: ${{ secrets.NOTION_API_KEY }}
+          NOTION_DATABASE_ID: ${{ secrets.NOTION_DATABASE }}
           ISSUE_TITLE: "${{ github.event.issue.title }}"
           ISSUE_URL: "${{ github.event.issue.html_url }}"
           ISSUE_STATE: "${{ github.event.issue.state }}"
