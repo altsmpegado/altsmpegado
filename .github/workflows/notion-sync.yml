@@ -21,4 +21,5 @@ jobs:
           ISSUE_URL: "${{ github.event.issue.html_url }}"
           ISSUE_STATE: "${{ github.event.issue.state }}"
           ISSUE_LABELS: "${{ toJson(github.event.issue.labels) }}"
+          ISSUE_BODY: "${{ github.event.issue.body }}"
           REPO_NAME: "${{ github.repository }}"

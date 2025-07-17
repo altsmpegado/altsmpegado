@@ -27,6 +27,13 @@ async function createOrUpdateIssueInNotion() {
       Labels: {
         multi_select: labels.map(name => ({ name })),
       },
+      Description: {
+        rich_text: [
+            {
+            text: { content: process.env.ISSUE_BODY || "No description" },
+            },
+        ],
+      },
       Repository: {
         rich_text: [
           {
