@@ -39,9 +39,9 @@ async function createOrUpdateIssueInNotion() {
     const assigneeGitHub = process.env.ISSUE_ASSIGNEE;
     const notionAssigneeId = userMap[assigneeGitHub];
 
-    const issueBody = process.env.ISSUE_BODY || "No description";
-    const startDate = extractDateFromBody(issueBody, "Start");
-    const dueDate = extractDateFromBody(issueBody, "Due");
+    const issueBodyRaw = process.env.ISSUE_BODY || "No description";
+    const startDate = extractDateFromBody(issueBodyRaw, "Start");
+    const dueDate = extractDateFromBody(issueBodyRaw, "Due");
     const issueBodyCleaned = cleanDescription(issueBodyRaw);
 
     const properties = {
