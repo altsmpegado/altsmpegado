@@ -6,7 +6,7 @@ const userMap = {
     "altsmpegado": "d8974b57-089f-498d-8be6-f83c3506b091"
 };
 function extractDateFromBody(body, label) {
-    const regex = new RegExp(`## ${label}\\s+(\\d{2}/\\d{2}/\\d{4})`, "i");
+    const regex = new RegExp(`### ${label}\\s+(\\d{2}/\\d{2}/\\d{4})`, "i");
     const match = body.match(regex);
     if (!match) return null;
     // Convert DD/MM/YYYY to YYYY-MM-DD
@@ -15,8 +15,8 @@ function extractDateFromBody(body, label) {
 }
 
 function cleanDescription(body) {
-    return body.replace(/## Start\s+\d{2}\/\d{2}\/\d{4}/i, "")
-            .replace(/## Due\s+\d{2}\/\d{2}\/\d{4}/i, "")
+    return body.replace(/### Start\s+\d{2}\/\d{2}\/\d{4}/i, "")
+            .replace(/### Due\s+\d{2}\/\d{2}\/\d{4}/i, "")
             .trim();
 }
 
@@ -30,6 +30,14 @@ async function findPageByIssueUrl(issueUrl) {
     });
 
     return response.results[0]; // returns undefined if not found
+}
+
+async function deleteAllBlocks(pageId) {
+    // Get children blocks
+    const blocks = await notion.blocks.children.list({ block_id: pageId });
+    for (const block of blocks.results) {
+        await notion.blocks.delete({ block_id: block.id });
+    }
 }
 
 async function createOrUpdateIssueInNotion() {
@@ -57,9 +65,6 @@ async function createOrUpdateIssueInNotion() {
         Labels: {
             multi_select: labels.map(name => ({ name })),
         },
-        Description: {
-            rich_text: [{ text: { content: issueBodyCleaned || "No description" } }],
-        },
         Repository: {
             rich_text: [{ text: { content: process.env.REPO_NAME } }],
         },
@@ -86,10 +91,45 @@ async function createOrUpdateIssueInNotion() {
             page_id: existingPage.id,
             properties,
         });
+
+        await deleteAllBlocks(existingPage.id);
+
+        await notion.blocks.children.append({
+            block_id: existingPage.id,
+            children: [
+                {
+                    object: "block",
+                    type: "paragraph",
+                    paragraph: {
+                        text: [
+                            {
+                                type: "text",
+                                text: { content: issueBodyCleaned || "No description" },
+                            },
+                        ],
+                    },
+                },
+            ],
+        });
+
     } else {
         await notion.pages.create({
             parent: { database_id: process.env.NOTION_DATABASE_ID },
             properties,
+            children: [
+                {
+                    object: "block",
+                    type: "paragraph",
+                    paragraph: {
+                        text: [
+                            {
+                                type: "text",
+                                text: { content: issueBodyCleaned || "No description" },
+                            },
+                        ],
+                    },
+                },
+            ],
         });
     }
 }
