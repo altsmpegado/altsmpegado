@@ -1,4 +1,4 @@
-name: Sync GitHub Issues to Notion
+name: Sync GitHub Issue to Notion
 
 on:
     issues:
@@ -7,7 +7,7 @@ on:
         types: [created]
 
 jobs:
-    sync:
+    sync-issue:
         runs-on: ubuntu-latest
         steps:
             - uses: actions/checkout@v3
