@@ -40,6 +40,42 @@ async function deleteAllBlocks(pageId) {
   }
 }
 
+async function addCommentToNotionPage(pageId, commentBody) {
+  try {
+    await notion.comments.create({
+      parent: { page_id: pageId },
+      rich_text: [
+        {
+          type: "text",
+          text: {
+            content: commentBody,
+          },
+        },
+      ],
+    });
+  } catch (error) {
+    console.error("Failed to add comment to Notion:", error.message);
+  }
+}
+
+async function fetchGitHubComments(issue) {
+  const commentsUrl = issue.comments_url;
+  const res = await fetch(commentsUrl, {
+    headers: {
+      Authorization: `Bearer ${process.env.GITHUB_TOKEN}`,
+      Accept: "application/vnd.github+json",
+    },
+  });
+
+  if (!res.ok) {
+    console.warn(`Failed to fetch comments for ${issue.html_url}`);
+    return [];
+  }
+
+  const comments = await res.json();
+  return comments.map(comment => `💬 ${comment.user.login} : ${comment.body}`);
+}
+
 async function syncIssue(issue) {
   const issueUrl = issue.html_url;
   const issueTitle = issue.title;
@@ -76,15 +112,15 @@ async function syncIssue(issue) {
 
   const existingPage = await findPageByIssueUrl(issueUrl);
 
+  let pageId;
   if (existingPage) {
-    // Update properties
     await notion.pages.update({
       page_id: existingPage.id,
       properties,
     });
-    // Clear old content
+
     await deleteAllBlocks(existingPage.id);
-    // Add new issue body as rich text blocks
+
     await notion.blocks.children.append({
       block_id: existingPage.id,
       children: [
@@ -102,9 +138,10 @@ async function syncIssue(issue) {
         },
       ],
     });
+
+    pageId = existingPage.id;
   } else {
-    // Create new page with properties and issue body content
-    await notion.pages.create({
+    const newPage = await notion.pages.create({
       parent: { database_id: process.env.NOTION_DATABASE_ID },
       properties,
       children: [
@@ -122,11 +159,17 @@ async function syncIssue(issue) {
         },
       ],
     });
+    pageId = newPage.id;
+  }
+
+  const comments = await fetchGitHubComments(issue);
+  for (const comment of comments) {
+    await addCommentToNotionPage(pageId, comment);
   }
 }
 
 async function fetchAndSyncAllIssues() {
-  const repoFullName = process.env.REPO_FULL_NAME; // e.g. "user/repo"
+  const repoFullName = process.env.REPO_FULL_NAME;
   const perPage = 100;
   let page = 1;
   let fetched;
@@ -156,7 +199,7 @@ async function fetchAndSyncAllIssues() {
     page++;
   } while (fetched.length === perPage);
 
-  console.log("All GitHub issues synced to Notion.");
+  console.log("All GitHub issues and comments synced to Notion.");
 }
 
 fetchAndSyncAllIssues().catch(console.error);
