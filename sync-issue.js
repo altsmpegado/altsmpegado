@@ -44,19 +44,17 @@ async function appendCommentToPage(pageId, commentBody, author) {
     if (!commentBody) return;
 
     const formattedText = `💬 ${author}: ${commentBody}`;
-    const existingBlocks = await notion.blocks.children.list({ block_id: pageId });
 
     await notion.blocks.children.append({
         block_id: pageId,
         children: [
             {
-                object: "block",
-                callout: {
-                    icon: { type: "emoji", emoji: "💬" },
+                object: "comment",
+                paragraph: {
                     rich_text: [
                         {
                             type: "text",
-                            text: { content: `${author}: ${commentBody}` },
+                            text: { content: formattedText },
                         },
                     ],
                 },
