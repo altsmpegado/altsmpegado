@@ -1,4 +1,5 @@
 const { Client } = require("@notionhq/client");
+const fetch = global.fetch || require("node-fetch");
 
 const notion = new Client({ auth: process.env.NOTION_TOKEN });
 
@@ -7,7 +8,7 @@ const userMap = {
 };
 
 function extractDateFromBody(body, label) {
-  const regex = new RegExp(`## ${label}\\s+(\\d{2}/\\d{2}/\\d{4})`, "i");
+  const regex = new RegExp(`### ${label}\\s+(\\d{2}/\\d{2}/\\d{4})`, "i");
   const match = body.match(regex);
   if (!match) return null;
   const [day, month, year] = match[1].split("/");
@@ -16,8 +17,8 @@ function extractDateFromBody(body, label) {
 
 function cleanDescription(body) {
   return body
-    .replace(/## Start\s+\d{2}\/\d{2}\/\d{4}/i, "")
-    .replace(/## Due\s+\d{2}\/\d{2}\/\d{4}/i, "")
+    .replace(/### Start\s+\d{2}\/\d{2}\/\d{4}/i, "")
+    .replace(/### Due\s+\d{2}\/\d{2}\/\d{4}/i, "")
     .trim();
 }
 
@@ -32,39 +33,19 @@ async function findPageByIssueUrl(issueUrl) {
   return response.results[0];
 }
 
-async function syncComments(issue, notionPageId) {
-  if (issue.comments === 0) return; // no comments to sync
-
-  const res = await fetch(issue.comments_url, {
-    headers: {
-      Authorization: `Bearer ${process.env.GITHUB_TOKEN}`,
-      Accept: "application/vnd.github+json",
-    },
-  });
-  if (!res.ok) throw new Error(`Failed fetching comments: ${await res.text()}`);
-
-  const comments = await res.json();
-
-  for (const comment of comments) {
-    await notion.comments.create({
-      parent: { page_id: notionPageId },
-      rich_text: [
-        {
-          type: "text",
-          text: { content: `${comment.user.login}: ${comment.body}` },
-        },
-      ],
-      display_name: { type: "integration" },
-    });
+async function deleteAllBlocks(pageId) {
+  const blocks = await notion.blocks.children.list({ block_id: pageId });
+  for (const block of blocks.results) {
+    await notion.blocks.delete({ block_id: block.id });
   }
 }
 
-async function syncIssueToNotion(issue) {
+async function syncIssue(issue) {
   const issueUrl = issue.html_url;
   const issueTitle = issue.title;
   const issueBodyRaw = issue.body || "No description";
   const issueState = issue.state;
-  const repoName = issue.repository_url.split("/").slice(-1)[0];
+  const repoName = issue.repository_url.split("/").pop();
   const assigneeGitHub = issue.assignee?.login;
   const labels = issue.labels.map(label => label.name);
 
@@ -79,7 +60,6 @@ async function syncIssueToNotion(issue) {
     Status: { status: { name: issueState === "open" ? "Open" : "Closed" } },
     Labels: { multi_select: labels.map(name => ({ name })) },
     Repository: { rich_text: [{ text: { content: repoName } }] },
-    Description: { rich_text: [{ text: { content: issueBodyCleaned || "No description" } }] },
   };
 
   if (notionAssigneeId) {
@@ -97,49 +77,86 @@ async function syncIssueToNotion(issue) {
   const existingPage = await findPageByIssueUrl(issueUrl);
 
   if (existingPage) {
+    // Update properties
     await notion.pages.update({
       page_id: existingPage.id,
       properties,
     });
-    await syncComments(issue, existingPage.id);
+    // Clear old content
+    await deleteAllBlocks(existingPage.id);
+    // Add new issue body as rich text blocks
+    await notion.blocks.children.append({
+      block_id: existingPage.id,
+      children: [
+        {
+          object: "block",
+          type: "paragraph",
+          paragraph: {
+            rich_text: [
+              {
+                type: "text",
+                text: { content: issueBodyCleaned || "No description" },
+              },
+            ],
+          },
+        },
+      ],
+    });
   } else {
-    const newPage = await notion.pages.create({
+    // Create new page with properties and issue body content
+    await notion.pages.create({
       parent: { database_id: process.env.NOTION_DATABASE_ID },
       properties,
+      children: [
+        {
+          object: "block",
+          type: "paragraph",
+          paragraph: {
+            rich_text: [
+              {
+                type: "text",
+                text: { content: issueBodyCleaned || "No description" },
+              },
+            ],
+          },
+        },
+      ],
     });
-    await syncComments(issue, newPage.id);
   }
 }
 
-async function fetchAllGitHubIssues() {
-  const repo = process.env.REPO_FULL_NAME; // e.g. "username/repo"
+async function fetchAndSyncAllIssues() {
+  const repoFullName = process.env.REPO_FULL_NAME; // e.g. "user/repo"
   const perPage = 100;
   let page = 1;
-  let issues = [];
   let fetched;
 
   do {
-    const res = await fetch(`https://api.github.com/repos/${repo}/issues?state=all&per_page=${perPage}&page=${page}`, {
-      headers: {
-        Authorization: `Bearer ${process.env.GITHUB_TOKEN}`,
-        Accept: "application/vnd.github+json",
-      },
-    });
+    const res = await fetch(
+      `https://api.github.com/repos/${repoFullName}/issues?state=all&per_page=${perPage}&page=${page}`,
+      {
+        headers: {
+          Authorization: `Bearer ${process.env.GITHUB_TOKEN}`,
+          Accept: "application/vnd.github+json",
+        },
+      }
+    );
+
     if (!res.ok) {
-      console.error("GitHub API error:", await res.text());
-      return;
+      throw new Error(`GitHub API error: ${res.status} ${await res.text()}`);
     }
+
     fetched = await res.json();
-    const filtered = fetched.filter(issue => !issue.pull_request);
-    issues.push(...filtered);
+    const issuesOnly = fetched.filter(issue => !issue.pull_request);
+
+    for (const issue of issuesOnly) {
+      await syncIssue(issue);
+    }
+
     page++;
   } while (fetched.length === perPage);
 
-  for (const issue of issues) {
-    await syncIssueToNotion(issue);
-  }
-
-  console.log(`Synced ${issues.length} issues.`);
+  console.log("All GitHub issues synced to Notion.");
 }
 
-fetchAllGitHubIssues().catch(console.error);
+fetchAndSyncAllIssues().catch(console.error);
