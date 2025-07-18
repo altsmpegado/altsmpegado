@@ -5,6 +5,7 @@ const notion = new Client({ auth: process.env.NOTION_TOKEN });
 const userMap = {
     "altsmpegado": "d8974b57-089f-498d-8be6-f83c3506b091"
 };
+
 function extractDateFromBody(body, label) {
     const regex = new RegExp(`### ${label}\\s+(\\d{2}/\\d{2}/\\d{4})`, "i");
     const match = body.match(regex);
@@ -76,7 +77,7 @@ async function createOrUpdateIssueInNotion() {
     const assigneeGitHub = process.env.ISSUE_ASSIGNEE;
     const notionAssigneeId = userMap[assigneeGitHub];
 
-    const issueBodyRaw = process.env.ISSUE_BODY || "No description";
+    const issueBodyRaw = process.env.ISSUE_BODY;
     const startDate = extractDateFromBody(issueBodyRaw, "Start");
     const dueDate = extractDateFromBody(issueBodyRaw, "Due");
     const issueBodyCleaned = cleanDescription(issueBodyRaw);
@@ -133,7 +134,7 @@ async function createOrUpdateIssueInNotion() {
                         rich_text: [
                             {
                                 type: "text",
-                                text: { content: issueBodyCleaned || "No description" },
+                                text: { content: issueBodyCleaned },
                             },
                         ],
                     },
@@ -153,7 +154,7 @@ async function createOrUpdateIssueInNotion() {
                         rich_text: [
                             {
                                 type: "text",
-                                text: { content: issueBodyCleaned || "No description" },
+                                text: { content: issueBodyCleaned },
                             },
                         ],
                     },
