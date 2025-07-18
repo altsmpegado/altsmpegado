@@ -40,20 +40,33 @@ async function deleteAllBlocks(pageId) {
     }
 }
 
-async function appendCommentToPage(pageId, commentBody, author) {
-    if (!commentBody) return;
-
-    const formattedText = `💬 ${author}: ${commentBody}`;
-
-    await notion.comments.create({
-        parent: pageId,
-        rich_text: [
+async function addCommentToNotionPage(pageId, commentBody) {
+    try {
+        const response = await notion.comments.create({
+            parent: { page_id: pageId },
+            rich_text: [
             {
                 type: "text",
-                text: { content: formattedText },
-            },
-        ]
-    });
+                text: {
+                    content: commentBody
+                }
+            }
+            ]
+        });
+
+        console.log("Comment added:", response);
+    } catch (error) {
+        console.error("Failed to add comment to Notion:", error);
+    }
+}
+
+async function handleNewGithubComment(commentBody, issueUrl) {
+    const page = await findPageByIssueUrl(issueUrl);
+    if (page) {
+        await addCommentToNotionPage(page.id, commentBody);
+    } else {
+        console.warn("No Notion page found for the issue to comment on.");
+    }
 }
 
 async function createOrUpdateIssueInNotion() {
@@ -151,9 +164,8 @@ async function createOrUpdateIssueInNotion() {
 
     const commentBody = process.env.COMMENT_BODY;
     const commentAuthor = process.env.COMMENT_AUTHOR;
-
-    if (commentBody && commentAuthor && existingPage) {
-        await appendCommentToPage(existingPage.id, commentBody, commentAuthor);
+    if (commentBody) {
+        await handleNewGithubComment(commentBody, process.env.ISSUE_URL);
     }
 }
 
