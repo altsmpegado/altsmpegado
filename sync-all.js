@@ -1,7 +1,6 @@
 const { Client } = require("@notionhq/client");
 const fetch = require("node-fetch");
 
-// Initialize Notion client
 const notion = new Client({ auth: process.env.NOTION_TOKEN });
 
 const userMap = {
@@ -34,6 +33,33 @@ async function findPageByIssueUrl(issueUrl) {
   return response.results[0];
 }
 
+async function syncComments(issue, notionPageId) {
+  if (issue.comments === 0) return; // no comments to sync
+
+  const res = await fetch(issue.comments_url, {
+    headers: {
+      Authorization: `Bearer ${process.env.GITHUB_TOKEN}`,
+      Accept: "application/vnd.github+json",
+    },
+  });
+  if (!res.ok) throw new Error(`Failed fetching comments: ${await res.text()}`);
+
+  const comments = await res.json();
+
+  for (const comment of comments) {
+    await notion.comments.create({
+      parent: { page_id: notionPageId },
+      rich_text: [
+        {
+          type: "text",
+          text: { content: `${comment.user.login}: ${comment.body}` },
+        },
+      ],
+      display_name: { type: "integration" },
+    });
+  }
+}
+
 async function syncIssueToNotion(issue) {
   const issueUrl = issue.html_url;
   const issueTitle = issue.title;
@@ -54,6 +80,7 @@ async function syncIssueToNotion(issue) {
     Status: { status: { name: issueState === "open" ? "Open" : "Closed" } },
     Labels: { multi_select: labels.map(name => ({ name })) },
     Repository: { rich_text: [{ text: { content: repoName } }] },
+    Description: { rich_text: [{ text: { content: issueBodyCleaned || "No description" } }] },
   };
 
   if (notionAssigneeId) {
@@ -75,52 +102,18 @@ async function syncIssueToNotion(issue) {
       page_id: existingPage.id,
       properties,
     });
-    await notion.blocks.children.append({
-      block_id: existingPage.id,
-      children: [
-        {
-          object: "block",
-          paragraph: {
-            rich_text: [
-              {
-                type: "text",
-                text: {
-                  content: issueBodyCleaned,
-                },
-              },
-            ],
-          },
-        },
-      ],
-    });
+    await syncComments(issue, existingPage.id);
   } else {
     const newPage = await notion.pages.create({
       parent: { database_id: process.env.NOTION_DATABASE_ID },
       properties,
     });
-    await notion.blocks.children.append({
-      block_id: newPage.id,
-      children: [
-        {
-          object: "block",
-          paragraph: {
-            rich_text: [
-              {
-                type: "text",
-                text: {
-                  content: issueBodyCleaned,
-                },
-              },
-            ],
-          },
-        },
-      ],
-    });
+    await syncComments(issue, newPage.id);
   }
 }
 
 async function fetchAllGitHubIssues() {
-  const repo = process.env.REPO_FULL_NAME; // example: "username/repo"
+  const repo = process.env.REPO_FULL_NAME; // e.g. "username/repo"
   const perPage = 100;
   let page = 1;
   let issues = [];
@@ -133,14 +126,12 @@ async function fetchAllGitHubIssues() {
         Accept: "application/vnd.github+json",
       },
     });
-
     if (!res.ok) {
-      console.error("GitHub API error", await res.text());
+      console.error("GitHub API error:", await res.text());
       return;
     }
-
     fetched = await res.json();
-    const filtered = fetched.filter(issue => !issue.pull_request); // exclude PRs
+    const filtered = fetched.filter(issue => !issue.pull_request);
     issues.push(...filtered);
     page++;
   } while (fetched.length === perPage);
