@@ -1,5 +1,4 @@
 const { Client } = require("@notionhq/client");
-const fetch = require("node-fetch");
 
 const notion = new Client({ auth: process.env.NOTION_TOKEN });
 
