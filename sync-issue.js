@@ -164,8 +164,9 @@ async function createOrUpdateIssueInNotion() {
 
     const commentBody = process.env.COMMENT_BODY;
     const commentAuthor = process.env.COMMENT_AUTHOR;
+    const fullComment = `💬 ${commentAuthor} : ${commentBody}`;
     if (commentBody) {
-        await handleNewGithubComment(commentBody, process.env.ISSUE_URL);
+        await handleNewGithubComment(fullComment, process.env.ISSUE_URL);
     }
 }
 
